@@ -26,6 +26,6 @@ public class ResumeCreatorInput {
 
     //Returning Un Modifiable Map from this Immutable object
     public Map<String, String> getTokenReplacementMap() {
-        return Collections.unmodifiableMap(tokenReplacementMap);
+        return tokenReplacementMap != null ? Collections.unmodifiableMap(tokenReplacementMap) : null;
     }
 }
