@@ -30,7 +30,9 @@ public enum ResumeCreatorDataHelper {
     public ResumeCreatorInput createInputWithEmptyReplacementMap() {
         return new ResumeCreatorInput(getDefaultFile(), null);
     }
-
+    public ResumeCreatorInput createValidInput() {
+        return new ResumeCreatorInput(getDefaultFile(), replacementMap);
+    }
 
     private InputStream getDefaultFile() {
         InputStream inputStream = null;
