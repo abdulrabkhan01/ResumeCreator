@@ -8,20 +8,7 @@
     <artifactId>ResumeCreatorApp</artifactId>
     <version>1.0-SNAPSHOT</version>
 
-    <build>
-        <plugins>
-            <plugin>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.22.2</version>
-            </plugin>
-            <plugin>
-                <artifactId>maven-failsafe-plugin</artifactId>
-                <version>2.22.2</version>
-            </plugin>
-        </plugins>
-    </build>
-
-    <dependencies>
+       <dependencies>
         <!-- ... -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
@@ -37,6 +24,9 @@
         </dependency>
         <!-- ... -->
     </dependencies>
-
+    <properties>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compiler.source>1.8</maven.compiler.source>
+    </properties>
 
 </project>
