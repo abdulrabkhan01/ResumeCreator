@@ -43,5 +43,13 @@ public class ResumeCreatorSpec {
         assertThrows(ResumeCreationException.class,()-> {resumeCreatorService.createResume(input);});
     }
 
+    @Test
+    @DisplayName("Given Valid Template & Replacement Map, Resume Creator should create Non Empty Output")
+    void nonEmptyOutputSpec() {
+        ResumeCreatorDataHelper dataHelper = ResumeCreatorDataHelper.INSTANCE;
+        ResumeCreatorInput input = dataHelper.createInputWithEmptyReplacementMap();
+        assertTrue(resumeCreatorService.createResume(input) != null);
+    }
+
 
 }

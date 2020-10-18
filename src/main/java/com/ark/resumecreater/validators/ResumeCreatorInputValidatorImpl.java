@@ -5,11 +5,10 @@ import com.ark.resumecreater.exceptions.ResumeCreationException;
 
 public class ResumeCreatorInputValidatorImpl implements IResumeCreatorInputValidator {
     @Override
-    public boolean validateInput(ResumeCreatorInput input) {
+    public void validateInput(ResumeCreatorInput input) {
         validateEmptyInputObject(input);
-        validateNotEmptyTemplate(input);
+        validateEmptyTemplate(input);
         validateEmptyReplacementMap(input);
-        return true;
     }
     private void validateEmptyInputObject(ResumeCreatorInput input) {
         if(input == null) {
@@ -23,7 +22,7 @@ public class ResumeCreatorInputValidatorImpl implements IResumeCreatorInputValid
         }
     }
 
-    private void validateNotEmptyTemplate(ResumeCreatorInput input) {
+    private void validateEmptyTemplate(ResumeCreatorInput input) {
         if (input.getResumeTemplate()==null) {
             throw new ResumeCreationException("Template is empty ");
         }
