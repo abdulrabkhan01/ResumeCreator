@@ -6,9 +6,15 @@ import com.ark.resumecreater.exceptions.ResumeCreationException;
 public class ResumeCreatorInputValidatorImpl implements IResumeCreatorInputValidator {
     @Override
     public boolean validateInput(ResumeCreatorInput input) {
+        validateEmptyInputObject(input);
         validateNotEmptyTemplate(input);
         validateEmptyReplacementMap(input);
         return true;
+    }
+    private void validateEmptyInputObject(ResumeCreatorInput input) {
+        if(input == null) {
+            throw new ResumeCreationException("ResumeCreatorInput is null or empty");
+        }
     }
 
     private void validateEmptyReplacementMap(ResumeCreatorInput input) {

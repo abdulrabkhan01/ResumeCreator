@@ -20,6 +20,14 @@ public class ResumeCreatorSpec {
     IResumeCreatorService resumeCreatorService = new ResumeCreatorServiceImpl();
 
     @Test
+    @DisplayName("Given Null Input object for  Resume Generation, Exception should be thrown at Runtime")
+    void emptyInputSpec() {
+        ResumeCreatorDataHelper dataHelper = ResumeCreatorDataHelper.INSTANCE;
+        ResumeCreatorInput input = null;
+        assertThrows(ResumeCreationException.class,()-> {resumeCreatorService.createResume(input);});
+    }
+
+    @Test
     @DisplayName("Given Empty Template for Resume Generation, Exception should be thrown at Runtime")
     void emptyTemplateSpec() {
         ResumeCreatorDataHelper dataHelper = ResumeCreatorDataHelper.INSTANCE;
