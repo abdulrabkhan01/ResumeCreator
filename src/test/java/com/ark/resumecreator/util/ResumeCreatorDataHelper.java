@@ -1,21 +1,14 @@
 package com.ark.resumecreator.util;
 
 import com.ark.resumecreater.domain.ResumeCreatorInput;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Map;
-
+import java.io.*;
+import java.util.*;
 /**
  * <p> Singleton  for populating input for testing</p>
  *
  * @author AbdulR
  */
 public enum ResumeCreatorDataHelper {
-
     INSTANCE();
     private static Map<String, String> replacementMap = new HashMap<>();
 
