@@ -1,11 +1,10 @@
 package com.ark.resumecreater.bo;
+import com.ark.resumecreater.domain.*;
+import java.io.*;
 
-import com.ark.resumecreater.domain.ResumeCreatorInput;
-import com.ark.resumecreater.domain.ResumeCreatorOutput;
-
-import java.io.IOException;
-import java.io.OutputStream;
-
+/**
+ * @author AbdulR
+ */
 public class ResumeCreatorImpl implements IResumeCreator {
     @Override
     public ResumeCreatorOutput createResume(ResumeCreatorInput resumeCreatorInput) {
