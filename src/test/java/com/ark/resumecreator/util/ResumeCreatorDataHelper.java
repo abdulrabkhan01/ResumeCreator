@@ -15,6 +15,7 @@ public enum ResumeCreatorDataHelper {
     static {
         replacementMap.put("${name}", "Abdul");
         replacementMap.put("${address}", "Lane number 102, Chicago");
+        replacementMap.put("${email}","test@ark.com");
     }
 
     public ResumeCreatorInput createInputWithEmptyDocument() {
