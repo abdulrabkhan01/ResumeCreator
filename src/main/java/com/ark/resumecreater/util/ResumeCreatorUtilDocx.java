@@ -76,22 +76,28 @@ public enum ResumeCreatorUtilDocx {
     private void performReplacementInRun(Map<String, String> tokenReplacementMap, XWPFParagraph xwpfParagraph, List<XWPFRun> runsInParagraph) {
         Set<String> keys = tokenReplacementMap.keySet();
         for (String key : keys) {
+            //Search if the given string present under paragraph.
             TextSegment textSegment = xwpfParagraph.searchText(key, new PositionInParagraph());
             if (textSegment != null) {
-                String allRunsText = EMPTY_STRING;
-                int currentRunIndex = textSegment.getBeginRun(), finalRunIndex = textSegment.getEndRun();
-                while (currentRunIndex <= finalRunIndex) {
-                    XWPFRun currentRun = runsInParagraph.get(currentRunIndex);
-                    allRunsText += currentRun.text();
-                    if (currentRunIndex > 0) {
-                        currentRun.setText(EMPTY_STRING, 0);
-                    }
-                    currentRunIndex++;
-                }
-                allRunsText = allRunsText.replace(key, tokenReplacementMap.get(key));
-                XWPFRun firstRun = runsInParagraph.get(0);
-                firstRun.setText(allRunsText);
+                //If text if found then perform replacement.
+                performReplacement(tokenReplacementMap, runsInParagraph, key, textSegment);
             }
         }
+    }
+
+    private void performReplacement(Map<String, String> tokenReplacementMap, List<XWPFRun> runsInParagraph, String key, TextSegment textSegment) {
+        String allRunsText = EMPTY_STRING;
+        int currentRunIndex = textSegment.getBeginRun(), finalRunIndex = textSegment.getEndRun();
+        //Text might present in multiple runs.
+        while (currentRunIndex <= finalRunIndex) {
+            XWPFRun currentRun = runsInParagraph.get(currentRunIndex);
+            allRunsText += currentRun.text();
+            currentRun.setText(EMPTY_STRING, 0); //Set the Empty String
+            currentRunIndex++;
+        }
+        allRunsText = allRunsText.replace(key, tokenReplacementMap.get(key));
+        //Add the multiple runs text in first run.
+        XWPFRun firstRun = runsInParagraph.get(0);
+        firstRun.setText(allRunsText);
     }
 }
