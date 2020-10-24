@@ -2,6 +2,7 @@ package com.ark.resumecreator.util;
 
 import com.ark.resumecreater.exceptions.ResumeCreationException;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
+import org.apache.poi.xwpf.usermodel.XWPFHeader;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFRun;
 
@@ -42,20 +43,38 @@ public enum ResumeVerificationUtil {
     public boolean verifyIfDocumentContainsValue(InputStream inputStream, String value) {
         try (XWPFDocument document = new XWPFDocument(inputStream)) {
             List<XWPFParagraph> paragraphs = document.getParagraphs();
-            if (paragraphs != null && !paragraphs.isEmpty()) {
-                for (XWPFParagraph paragraph : paragraphs) {
-                    List<XWPFRun> runs = paragraph.getRuns();
-                    for (XWPFRun run : runs) {
-                        System.out.println(run.text());
-                        if (run.text() != null && run.text().contains(value)) {
-                            return true;
-                        }
-                    }
-                }
+            if (checkValueInParagraphs(value, paragraphs) || checkValueInHeader(value, document.getHeaderList())) {
+                return true;
             }
         } catch (Exception ex) {
             ex.printStackTrace();
             throw new ResumeCreationException("Error has occurred while verifying document " + ex.getMessage());
+        }
+        return false;
+    }
+
+    private boolean checkValueInHeader(String value, List<XWPFHeader> headerList) {
+        if(headerList != null) {
+            for(XWPFHeader header : headerList) {
+                if(checkValueInParagraphs(value,header.getParagraphs())) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private boolean checkValueInParagraphs(String value, List<XWPFParagraph> paragraphs) {
+        if (paragraphs != null && !paragraphs.isEmpty()) {
+            for (XWPFParagraph paragraph : paragraphs) {
+                List<XWPFRun> runs = paragraph.getRuns();
+                for (XWPFRun run : runs) {
+                    System.out.println(run.text());
+                    if (run.text() != null && run.text().contains(value)) {
+                        return true;
+                    }
+                }
+            }
         }
         return false;
     }

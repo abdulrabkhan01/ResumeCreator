@@ -32,6 +32,7 @@ public enum ResumeCreatorUtilDocx {
             processParagraphs(xwpfDocument.getParagraphs(), tokenReplacementMap);
             List<XWPFTable> tables = xwpfDocument.getTables();
             processTables(tables, tokenReplacementMap);
+            processHeaders(xwpfDocument.getHeaderList(),tokenReplacementMap);
             modifiedDoc = xwpfDocument;
 
         } catch (Exception ex) {
@@ -39,6 +40,15 @@ public enum ResumeCreatorUtilDocx {
             throw new ResumeCreationException("Error Reading template " + ex.getMessage());
         }
         return modifiedDoc;
+    }
+
+    private void processHeaders(List<XWPFHeader> headerList, Map<String, String> tokenReplacementMap) {
+        if(headerList != null && !headerList.isEmpty()) {
+            for(XWPFHeader header: headerList) {
+                processParagraphs(header.getParagraphs(),tokenReplacementMap);
+                processTables(header.getTables(),tokenReplacementMap);
+            }
+        }
     }
 
     private void processTables(List<XWPFTable> tables, Map<String, String> tokenReplacementMap) {
