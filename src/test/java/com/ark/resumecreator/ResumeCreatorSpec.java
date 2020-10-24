@@ -6,9 +6,12 @@ import com.ark.resumecreater.exceptions.ResumeCreationException;
 import com.ark.resumecreater.service.IResumeCreatorService;
 import com.ark.resumecreater.service.ResumeCreatorServiceImpl;
 import com.ark.resumecreator.util.ResumeCreatorDataHelper;
+import com.ark.resumecreator.util.ResumeVerificationUtil;
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.io.FileOutputStream;
 import java.io.InputStream;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -18,6 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 public class ResumeCreatorSpec {
 
+    public static final String TEST_1_DOCX = "Test1.docx";
     IResumeCreatorService resumeCreatorService = new ResumeCreatorServiceImpl();
 
     @Test
@@ -52,5 +56,15 @@ public class ResumeCreatorSpec {
         assertTrue(resumeCreatorService.createResume(input) != null);
     }
 
-
+    @Test
+    @DisplayName("Given Valid Template & Replacement Map, Resume Creator should create Non Empty Output & tokens should be replaced with actual value.")
+    void nonEmptyOutputValidReplacementSpec() {
+        ResumeCreatorDataHelper dataHelper = ResumeCreatorDataHelper.INSTANCE;
+        ResumeVerificationUtil resumeVerificationUtil = ResumeVerificationUtil.INSTANCE;
+        ResumeCreatorInput input = dataHelper.createValidInput();
+        ResumeCreatorOutput output = resumeCreatorService.createResume(input);
+        resumeVerificationUtil.createSampleFile(output.getOutputStream(), TEST_1_DOCX);
+        InputStream inputStream = resumeVerificationUtil.getSampleFileAsStream(TEST_1_DOCX);
+        assertTrue(resumeVerificationUtil.verifyIfDocumentContainsValue(inputStream,"Abdul"));
+    }
 }

@@ -18,4 +18,5 @@ public class ResumeCreatorServiceImpl implements IResumeCreatorService {
         validator.validateInput(resumeCreatorInput);
         return resumeCreator.createResume(resumeCreatorInput);
     }
+
 }

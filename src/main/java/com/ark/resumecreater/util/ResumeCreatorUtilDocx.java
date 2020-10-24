@@ -19,12 +19,14 @@ import java.util.Set;
 public enum ResumeCreatorUtilDocx {
     INSTANCE;
 
+    public static final String EMPTY_STRING = "";
+
     public XWPFDocument updateTemplateUsingMap(ResumeCreatorInput input) {
         //input should already be validating before reaching here
         Map<String, String> tokenReplacementMap = input.getTokenReplacementMap();
         InputStream docxResumeTemplate = input.getResumeTemplate();
         XWPFDocument modifiedDoc = null;
-        try  {
+        try {
             XWPFDocument xwpfDocument = new XWPFDocument(docxResumeTemplate);
             List<XWPFParagraph> paragraphs = xwpfDocument.getParagraphs();
             processParagraphs(xwpfDocument.getParagraphs(), tokenReplacementMap);
@@ -38,44 +40,57 @@ public enum ResumeCreatorUtilDocx {
         }
         return modifiedDoc;
     }
-    //TODO lets this work first then will do refactoring to reduce cyclomatic complexity
+
     private void processTables(List<XWPFTable> tables, Map<String, String> tokenReplacementMap) {
         if (tables != null && !tables.isEmpty()) {
             for (XWPFTable table : tables) {
                 List<XWPFTableRow> xwpfTableRows = table.getRows();
                 if (xwpfTableRows != null && !xwpfTableRows.isEmpty()) {
-                    for (XWPFTableRow row : xwpfTableRows) {
-                        List<XWPFTableCell> xwpfTableCells = row.getTableCells();
-                        if (xwpfTableCells != null && !xwpfTableCells.isEmpty()) {
-                            for (XWPFTableCell cell : xwpfTableCells) {
-                                processParagraphs(cell.getParagraphs(), tokenReplacementMap);
-                            }
-                        }
-                    }
+                    processRows(tokenReplacementMap, xwpfTableRows);
+                }
+            }
+        }
+    }
+
+    private void processRows(Map<String, String> tokenReplacementMap, List<XWPFTableRow> xwpfTableRows) {
+        for (XWPFTableRow row : xwpfTableRows) {
+            List<XWPFTableCell> xwpfTableCells = row.getTableCells();
+            if (xwpfTableCells != null && !xwpfTableCells.isEmpty()) {
+                for (XWPFTableCell cell : xwpfTableCells) {
+                    processParagraphs(cell.getParagraphs(), tokenReplacementMap);
                 }
             }
         }
     }
 
 
-    //TODO lets this work first then will do refactoring to reduce cyclomatic complexity
     private void processParagraphs(List<XWPFParagraph> paragraphs, Map<String, String> tokenReplacementMap) {
         if (paragraphs != null && !paragraphs.isEmpty()) {
             for (XWPFParagraph xwpfParagraph : paragraphs) {
                 List<XWPFRun> runsInParagraph = xwpfParagraph.getRuns();
-                if (runsInParagraph != null && !runsInParagraph.isEmpty()) {
-                    for (XWPFRun xwpfRun : runsInParagraph) {
-                        String text = xwpfRun.getText(0);
-                        if (text != null) {
-                            Set<String> keys = tokenReplacementMap.keySet();
-                            for (String key : keys) {
-                                if (text.contains(key)) {
-                                    text = text.replace(key, tokenReplacementMap.get(key));
-                                }
-                            }
-                        }
+                performReplacementInRun(tokenReplacementMap, xwpfParagraph, runsInParagraph);
+            }
+        }
+    }
+
+    private void performReplacementInRun(Map<String, String> tokenReplacementMap, XWPFParagraph xwpfParagraph, List<XWPFRun> runsInParagraph) {
+        Set<String> keys = tokenReplacementMap.keySet();
+        for (String key : keys) {
+            TextSegment textSegment = xwpfParagraph.searchText(key, new PositionInParagraph());
+            if (textSegment != null) {
+                String allRunsText = EMPTY_STRING;
+                int currentRunIndex = textSegment.getBeginRun(), finalRunIndex = textSegment.getEndRun();
+                while (currentRunIndex <= finalRunIndex) {
+                    XWPFRun currentRun = runsInParagraph.get(currentRunIndex);
+                    allRunsText += currentRun.text();
+                    if (currentRunIndex > 0) {
+                        currentRun.setText(EMPTY_STRING, 0);
                     }
+                    currentRunIndex++;
                 }
+                allRunsText = allRunsText.replace(key, tokenReplacementMap.get(key));
+                XWPFRun firstRun = runsInParagraph.get(0);
+                firstRun.setText(allRunsText);
             }
         }
     }
