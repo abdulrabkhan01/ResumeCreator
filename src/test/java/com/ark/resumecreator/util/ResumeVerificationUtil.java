@@ -1,10 +1,7 @@
 package com.ark.resumecreator.util;
 
 import com.ark.resumecreater.exceptions.ResumeCreationException;
-import org.apache.poi.xwpf.usermodel.XWPFDocument;
-import org.apache.poi.xwpf.usermodel.XWPFHeader;
-import org.apache.poi.xwpf.usermodel.XWPFParagraph;
-import org.apache.poi.xwpf.usermodel.XWPFRun;
+import org.apache.poi.xwpf.usermodel.*;
 
 import java.io.*;
 import java.util.List;
@@ -43,12 +40,26 @@ public enum ResumeVerificationUtil {
     public boolean verifyIfDocumentContainsValue(InputStream inputStream, String value) {
         try (XWPFDocument document = new XWPFDocument(inputStream)) {
             List<XWPFParagraph> paragraphs = document.getParagraphs();
-            if (checkValueInParagraphs(value, paragraphs) || checkValueInHeader(value, document.getHeaderList())) {
+            if (checkValueInParagraphs(value, paragraphs)
+                    || checkValueInHeader(value, document.getHeaderList())
+                    || checkValueInFooter(value, document.getFooterList())
+                    ) {
                 return true;
             }
         } catch (Exception ex) {
             ex.printStackTrace();
             throw new ResumeCreationException("Error has occurred while verifying document " + ex.getMessage());
+        }
+        return false;
+    }
+
+    private boolean checkValueInFooter(String value, List<XWPFFooter> footerList) {
+        if(footerList != null) {
+            for(XWPFFooter footer : footerList) {
+                if(checkValueInParagraphs(value,footer.getParagraphs())) {
+                    return true;
+                }
+            }
         }
         return false;
     }
